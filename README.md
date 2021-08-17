@@ -12,7 +12,7 @@ The device is going to send these data points:
   - Timestamp
   - Soil moisture - 0 - 100%
   - External Temperature - Cº
-  - Humidity - 0 - 100%
+  - External Humidity - 0 - 100%
 
 For us to prove that we can handle the application, we are proposing that we develop two parts here.
 
