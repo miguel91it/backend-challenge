@@ -22,11 +22,12 @@ For us to prove that we can handle the application, we are proposing that we dev
 
 ```
 # Examples of running some devices with a device ID and passing parameters for interval and api
-./device DEADBEEF --interval 5s --api localhost:8080
-./device ABCDBBCC --interval 10s --api localhost:8080
+$ ./device DEADBEEF --interval 5s --api localhost:8080
+# or
+$ SERVER_HOST=localhost:8080 ./device ABCDBBCC --interval 10
 ```
 
-2. A API/Gateway that receives data from that device, saves the historical information and have and endpoints to query the data within a date range.
+2. A API/Gateway that receives data from that device, saves the historical information and have an endpoints to query the data within a time range.
 
 Feel free to add or change things on top of that idea. For example, you can add a way for devices to authenticate or be authorized to send data, spin up multiple simulated devices with a range of IDs and so on. For the current environment information on the device, you can a use a third party API for that like DarkSky or OpenWeatherMap.
 
@@ -51,3 +52,4 @@ Share your solution via URL to your git repository and would be cool to either d
 #### References
 
 - https://medium.com/@Ari_n/8-weather-api-alternatives-now-that-darksky-is-shutting-down-42a5ac395f93
+- https://openweathermap.org/current
