@@ -2,7 +2,7 @@
 
 ### Project
 
-A company wants to develop a home grown fresh plants monitoring system for casual users. The hardware development is still happening, but they to make sure our backend can handle the device sending data to the cloud and we can provide an interface to query the historical data for each device.
+A company wants to develop a home grown fresh plants monitoring system for casual users. The hardware development is still happening, but they want to make sure our backend can handle the device sending data to the cloud and that we can provide an interface to query the historical data for each device.
 
 The device is going to send these data points:
 
@@ -18,7 +18,7 @@ For us to prove that we can handle the application, we are proposing that we dev
 
 ![Architecture](./architecture.png)
 
-1. A simulated device that sends data every X seconds and after each interval, the simulation should increment the internal timestamp by one hour.
+1. A simulated device that sends data every X seconds and after each interval, the simulation should increment the internal timestamp by one hour. This way we can easily simulate a device sending data throughout the day.
 
 ```
 # Examples of running some devices with a device ID and passing parameters for interval and api
@@ -27,7 +27,7 @@ $ ./device DEADBEEF --interval 5s --api localhost:8080
 $ SERVER_HOST=localhost:8080 ./device ABCDBBCC --interval 10
 ```
 
-2. A API/Gateway that receives data from that device, saves the historical information and have an endpoints to query the data within a time range.
+2. A API/Gateway that receives data from that device, identify that device, saves the historical information and have an endpoints to query the data within a time range.
 
 Feel free to add or change things on top of that idea. For example, you can add a way for devices to authenticate or be authorized to send data, spin up multiple simulated devices with a range of IDs and so on. For the current environment information on the device, you can a use a third party API for that like DarkSky or OpenWeatherMap.
 
