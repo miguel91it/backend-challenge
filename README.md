@@ -6,123 +6,47 @@ Following it will be described how the project was structured and hot to run it.
 
 ## Project Structure
 
+The project is a monorepo containing a `src/ folder wich has:
 
-A API de trsnferência entre contas possui as seguintes entidades (modelos):
+    * main.go file               -> responsible to start the gateway application
+    * Dockerfile file            -> responsible to build the gateway container image
+    * gateway/ folder            -> responsible for group all files related to the gateway application
+    * devices-simulation/ folder -> responsible for group all files related to the devices simulation application
+    * docker-compose.yaml file   -> responsible for launch all the 3 containers (gateway, devices and mongodb)
+    * .env file                  -> responsible for provide environment variables for the gateway and devices containers
 
-    * Account
-    * Transfer
-    * Login
-    * Token 
-    * StorageInMemory
+Always you want to run the gateway application and the devices simulation, you'll use the `docker-compose` tool. To see how to run the solution, go to the end of this file.
 
-### Entidade Account
+## Gateway Module
 
-Esta entidade é responsável por agrupar os dados referentes à uma conta.
+Gateway Module is composed by 3 files:
 
-    * Id         (int)     -> id da conta
-    * Name       (string)  -> Nome do titular da conta
-    * Cpf        (string)  -> Cpf do titular da conta
-    * Secret     (string)  -> Senha da conta
-    * Balance    (float64) -> Saldo atual da conta
-    * Created_at (time)    -> Data e hora que a conta foi criada
+    * gateway.go  -> responsible for launch the gateway server
+    * handlers.go -> responsible for group the API endpoints handlers
+    * weather.go  -> responsible for modeling the weather entity
 
+The Weather Telemetry API has the following entity (model):
 
-### Entidade Transfer
+    * Weather
 
-Esta entidade é responsável por agrupar os dados referentes a uma transferência entre contas.
+### Weather Entity
 
-    * Id                     (string) -> UUID da transferência
-    * Account_origin_id      (int)    -> conta de origem da transferência
-    * Account_destination_id (int)    -> conta de destino da transferência
-    * Ammount                (float)  -> valor da transferência
-    * Created_at             (time)   -> Data e hora que a conta foi criada
+This entity groups data related to the environment weather sent by the devices.
 
-Toda vez que uma nova transferência tentar ser realizada, o saldo da conta de origem será avaliado e, se houver saldo maior ou igual ao que se deseja transferir, então será permitido. Do contrário não será permitido e um erro será retornado ao usuário da API.
+    * Device_id           (string)  -> MAC Addres as device id
+    * Timestamp           (int)     -> Timestamp of the measure
+    * SoilMoisture        (float64) -> Rate of soil moisture (must be between 0 and 100%)
+    * ExternalTemperature (float64) -> External temperature in celsius degree
+    * ExternalHumidity    (float64) -> Rate of external humidity (must be between 0 and 100%)
 
-Quando for possível realizar a transferência entre contas, o sistema irá registrar duas componentes de Transferência no banco de dados: débito e crédito.
+## Devices Module
 
-Registrará na lista de transferências da conta de origem uma nova transferência com valor negativo, significando débito. E, de forma simétrica, registrará na lista de transferẽncias da conta de destino uma nova transferência com o mesmo valor, porém positivo, isto é, um crédito.
+Devices Module is composed by 3 main files:
 
-Assim, dessa forma, é possível rastrear o caminho qual o atual salde de uma determinada conta percorreu, entre débitos e créditos.
+    * devices.go   -> contains a function to provides a list of MAC Address to the simualtion
+    * telemetry.go -> contains the functions responsible for sending telemetry
+    * main.go      -> responsible for coordinate the creation of one goroutine for each device and for the interval of sending management during the time of simulation desired.
 
-### Entidade Login
-
-Esta entidade é responsável por agrupar os dados referentes a um login.
-
-    * Cpf    (string) -> cpf da conta
-    * secret (string) -> senha da conta
-
-Toda vez que um usuário se logar na API, o cpf e a senha deverão ser fornecidos. O sistema então autenticará o usuário conferindo se para aquele CPF fornecido, a senha fornecida bate com a senha armazenada na conta do usuário. Se sim, então ele será autenticado e autorizado.
-
-
-### Entidade Token
-
-Esta entidade é responsável por agrupar os dados referentes a um token.
-
-    * Token           (string) -> string do token gerado
-    * Cpf             (string) -> cpf da conta
-    * AccountOriginId (int)    -> id da conta
-
-Toda vez que um usuário se logar na API, um novo token será gerado, a string do token será inserida no slice de tokens do banco de dados em memória e a string do token será retornada ao usuário para realizar futuras requisições.
-
-### Entidade StorageInMemory
-
-A entidade StorageInMemory chama-se assim porque optei por realizar um banco de dados em memória. A desvantagem dessa abordagem é que ao encerrar o sistema da API, todos os dados serão perdidos, porém, como não é um sistema que necessita manter dados persisitidos para além de uma avaliação, então não haverá problema nisso.
-
-A entidade StorageInMemory armazena 3 estruturas de dados necessárias para a API toda funcionar:
-
-    * accounts  ([]Accounts)         -> um slice de Accounts
-    * transfers (map[int][]Transfer) -> um map cujas chaves são os id's de cada conta cadastrada e o valor é um slice de Transfer (array de Transfer)
-    * tokens    ([]tokens)           -> um slice de Tokens
-
-Além disso a entidade StorageInMemory implementa uma interface *Storage* com funções típicas de banco de dados como SaveAccount, SaveTransfer, FindToken, etc.
-
-A estrutura accounts armazena todas as contas criadas.
-
-A estrutura transfers armazenará sempre 2 componentes (débito/crédito) para cada transferência realizada.
-
-toda vez que uma nova conta for criada na API, uma chave nova será criada no map de transfer sendo o id dessa nova conta a chave a ser usada no map e um slice vazio será criado como valor dessa chave.
-
-Por exemplo:
-
-    A estrutura transfers possui o seguinte estado no momento:
-
-        { }
-
-    Alguem criou uma nova conta com id 1 e, depois, com id 2. Então duas novas chaves serão criadas em transfers:
-
-        {
-            "1": [],
-            "2": []
-        }
-
-    E assim, sucessivamente.
-
-    No momento em que uma nova transferencia for realizada, por exemplo, da conta 2 para a conta 1, duas componentes de trasnfers serão criadas:
-
-        {
-            "1': [
-                {
-                    "Id": 087c5544-2504-434c-8a78-dd6346879547,
-                    "Account_origin_id": 1,
-                    "Account_destination_id": 2,
-                    "Ammount": 256.67,
-                    "Created_at": "2021-07-20T18:36:50.728821618-03:00"
-                }
-            ],
-            "2': [
-                {
-                    "Id": 087c5544-2504-434c-8a78-dd6346879547,
-                    "Account_origin_id": 1,
-                    "Account_destination_id": 2,
-                    "Ammount": -256.67,
-                    "Created_at": "2021-07-20T18:36:50.728821618-03:00"
-                }
-            ],
-        }
-
-    Repare que na conta 2 o valor é negativo enquanto que na conta 1 é positivo: débito e crédito.
-        
 
 ## How to run the project
 
