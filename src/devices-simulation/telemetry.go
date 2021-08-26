@@ -38,6 +38,8 @@ func sendTelemetry(mapIn map[string]interface{}) error {
 		return fmt.Errorf("resp Status: %+v\nResp Body: %s\nPayload: %+v", resp.Status, string(b), mapIn)
 	}
 
+	fmt.Printf("Device %s sent data to the gateway at %s\n", mapIn["id"].(string), mapIn["datetime"].(string))
+
 	return nil
 }
 
@@ -49,9 +51,9 @@ func createPayload(deviceId string, interval float64, nTimes int) map[string]int
 
 	now1hinterval := now1h - int64(interval)*int64(nTimes)
 
-	fmt.Println("now: ", now)
-	fmt.Println("now1h: ", now1h)
-	fmt.Println("now1hinterval: ", now1hinterval)
+	// fmt.Println("now: ", now)
+	// fmt.Println("now1h: ", now1h)
+	// fmt.Println("now1hinterval: ", now1hinterval)
 
 	now1hintervalTs := time.Unix(now1hinterval, 0)
 

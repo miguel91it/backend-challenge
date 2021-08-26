@@ -22,7 +22,7 @@ func WeatherTelemetry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("\nweather: %+v", weather)
+	fmt.Printf("\nGateway received weather from Device %s and datetime %s", weather.Device_id, weather.Datetime)
 
 	j, _ := json.Marshal(weather)
 
