@@ -57,6 +57,8 @@ func main() {
 		// raise a goroutine to send telemetry data
 		go func(device string, interval time.Duration, done chan bool) {
 
+			n := 0
+
 			// create a ticker to control the interval between sents
 			ticker := time.NewTicker(interval)
 
@@ -69,11 +71,13 @@ func main() {
 				// arrived the time to send telemetry data (ticker posted a signal into it's channel 'C')
 				case <-ticker.C:
 
-					if err := sendTelemetry(createPayload(device)); err != nil {
+					if err := sendTelemetry(createPayload(device, interval.Seconds(), n)); err != nil {
 
 						fmt.Printf("%s\n", err)
 
 					}
+
+					n++
 
 				// arrived the time to finish the goroutine
 				case <-done:

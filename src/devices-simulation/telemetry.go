@@ -41,11 +41,21 @@ func sendTelemetry(mapIn map[string]interface{}) error {
 	return nil
 }
 
-func createPayload(deviceId string) map[string]interface{} {
+func createPayload(deviceId string, interval float64, nTimes int) map[string]interface{} {
+
+	now := time.Now().Unix()
+
+	now1h := now + int64(3600*nTimes)
+
+	now1hinterval := now1h - int64(interval)*int64(nTimes)
+
+	fmt.Println("now: ", now)
+	fmt.Println("now1h: ", now1h)
+	fmt.Println("now1hinterval: ", now1hinterval)
 
 	return map[string]interface{}{
 		"id":              deviceId,
-		"timestamp":       time.Now().Unix(),
+		"timestamp":       now1hinterval,
 		"soil_moisture":   7.5,
 		"ext_temperature": 10.1,
 		"ext_humidity":    98.98,
