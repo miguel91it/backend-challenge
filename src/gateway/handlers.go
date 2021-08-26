@@ -51,6 +51,7 @@ func GetWeatherByFilter(w http.ResponseWriter, r *http.Request) {
 
 	json.NewDecoder(r.Body).Decode(&body)
 
+	fmt.Printf("Requesting for weather data between StardDate=%s and EndDate=%s\n", body.StartDate, body.EndDate)
 	// fmt.Printf("Body: %+v\n", body)
 
 	dateFilter := make(bson.M)
