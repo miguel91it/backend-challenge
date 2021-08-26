@@ -4,13 +4,41 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/golioth-gateway/gateway"
+	"github.com/golioth-gateway/goliothMongo"
 )
+
+var db goliothMongo.Repository
+
+func init() {
+
+	time.Sleep(3 * time.Second)
+
+	dbHost := os.Getenv("DB_HOST")
+	dbPortStr := os.Getenv("DB_PORT")
+	dbName := os.Getenv("DB_NAME")
+	telemetryCollection := os.Getenv("TELEMETRY_COLLECTION")
+
+	dbPort, _ := strconv.Atoi(dbPortStr)
+
+	db = goliothMongo.NewMongoClient(dbHost, dbPort)
+
+	if err := db.Connect(); err != nil {
+		fmt.Println("***[ERRO] : Could not initialize mongodbapi client:")
+		return
+	}
+
+	db.DropCollection(dbName, telemetryCollection)
+
+	fmt.Println("db: ", db)
+
+}
 
 func main() {
 
-	portEnv := os.Getenv("PORT")
+	portEnv := os.Getenv("GATEWAY_PORT")
 
 	port, err := strconv.Atoi(portEnv)
 
@@ -21,11 +49,7 @@ func main() {
 		return
 	}
 
-	dbPort := os.Getenv("DB_PORT")
-
-	fmt.Printf("PORT: %d\nDB_PORT: %s\n", port, dbPort)
-
-	gtw, err := gateway.NewGateway(port)
+	gtw, err := gateway.NewGateway(port, db)
 
 	if err != nil {
 		fmt.Printf("Error instantiating a new Gateway: %v\n", err)

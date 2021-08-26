@@ -7,6 +7,8 @@ import (
 	mux "github.com/gorilla/mux"
 )
 
+var db Repository
+
 type IGateway interface {
 	Run()
 }
@@ -15,11 +17,13 @@ type Gateway struct {
 	PORT int
 }
 
-func NewGateway(port int) (*Gateway, error) {
+func NewGateway(port int, database Repository) (*Gateway, error) {
 
 	if port < 9999 {
 		return nil, fmt.Errorf("PORT must be greater than 10000")
 	}
+
+	db = database
 
 	return &Gateway{
 		PORT: port,

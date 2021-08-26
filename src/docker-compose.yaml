@@ -19,8 +19,12 @@ services:
       context: .
       dockerfile: Dockerfile
     environment: 
-      - PORT=${GATEWAY_PORT}
+      - GATEWAY_PORT=${GATEWAY_PORT}
       - DB_PORT=${DB_PORT}
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - TELEMETRY_COLLECTION=${TELEMETRY_COLLECTION}
+
     ports:
       - ${GATEWAY_PORT}:${GATEWAY_PORT}
     depends_on:

@@ -9,6 +9,7 @@ RUN go mod download
 
 COPY *.go ./
 COPY ./gateway ./gateway
+COPY ./goliothMongo ./goliothMongo
 COPY Makefile ./
 
 RUN go build -o /golioth

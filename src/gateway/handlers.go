@@ -21,6 +21,20 @@ func WeatherTelemetry(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Printf("\nweather: %+v", weather)
 
+	j, _ := json.Marshal(weather)
+
+	var weatherAsMap map[string]interface{}
+
+	json.Unmarshal(j, &weatherAsMap)
+
+	fmt.Println(weatherAsMap)
+
+	// db.CreateDocuments(dbName, telemetryCollection, []map[string]interface{}{
+	db.CreateDocuments("golioth-challenge", "weatherTelemetry", []map[string]interface{}{
+
+		weatherAsMap,
+	})
+
 	w.WriteHeader(http.StatusOK)
 
 	fmt.Fprintf(w, "Weather Data received succesfuly")
