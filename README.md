@@ -41,6 +41,19 @@ This entity groups data related to the environment weather sent by the devices.
     * ExternalTemperature (float64) -> External temperature in celsius degree
     * ExternalHumidity    (float64) -> Rate of external humidity (must be between 0 and 100%)
 
+### Gateway  Endpoints
+
+Gateway has 2 visible endpoints to make a Request:
+
+    [POST] api/v1/WeatherTelemetry
+
+        Endpoint to send the weather data from a device
+
+    [POST] api/v1/GetWeather
+
+        Endpoint to get weather data from a datetime filter
+
+
 ## GoliothMongo Module
 
 GoliothMongo Module is composed by one file:
@@ -82,7 +95,7 @@ The command above will build and run all the 3 containers but only gateway and d
 
 It's possible to test manualy the telemetry endpoint of the API using command line tools like Curl or GUI tools like Postman.
 
-Following we have some example of how to send a telemetry data to the gateway using `Curl`:
+* Following we have some example of how to send a telemetry data to the gateway using `Curl`:
 
 > POST: localhost:28000/api/v1/WeatherTelemetry
 
@@ -109,5 +122,32 @@ Full `Curl` command:
 		"ext_temperature": 10.1,\
 		"ext_humidity":    1.3\
 	}'
+
+Experiment change soil_moisture, ext_temperature and ext_humidity values.
+
+
+* Following we have some example of how to send a telemetry data to the gateway using `Curl`:
+
+> POST: localhost:28000/api/v1/GetWeather
+
+```
+    Example of Request body:
+
+        {
+            "start_date": "2021-08-26T00:27:00",
+            "end_date": "2021-08-26T12:24:47",
+        }
+```
+
+Full `Curl` command:
+
+> curl --location --request POST 'localhost:28000/api/v1/GetWeather' \ \
+--header 'Content-Type: application/json' \ \
+--data-raw '{ \
+    "start_date": "2021-08-26T00:27:00", \
+    "end_date": "2021-08-26T12:24:47" \
+}'
+
+OBS: pay attention to the hour OFFSET when writing the filter because the containerized application persists the data in UTC timezone.
 
 Experiment change soil_moisture, ext_temperature and ext_humidity values.
