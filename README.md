@@ -148,6 +148,8 @@ Full `Curl` command:
     "end_date": "2021-08-26T12:24:47" \
 }'
 
+OBS: for now it's MANDATORY pass `start_date` and `end_date`, it will be fixed in the future. 
+
 OBS: pay attention to the hour OFFSET when writing the filter because the containerized application persists the data in UTC timezone.
 
 Experiment change soil_moisture, ext_temperature and ext_humidity values.
