@@ -36,6 +36,8 @@ func (g *Gateway) Run() error {
 
 	router.HandleFunc("/api/v1/WeatherTelemetry", WeatherTelemetry).Methods("POST")
 
+	router.HandleFunc("/api/v1/GetWeather", GetWeatherByFilter).Methods("POST")
+
 	addr := fmt.Sprintf("localhost:%v", g.PORT)
 
 	fmt.Printf("Starting Gateway at %s\n", addr)

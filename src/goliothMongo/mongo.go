@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -12,6 +13,7 @@ import (
 type Repository interface {
 	Connect() error
 	CreateDocuments(dbname string, collectionName string, documents []map[string]interface{}) (interface{}, error)
+	GetDocsByFilter(dbname string, collectionName string, filters bson.M) ([]bson.M, error)
 	DropCollection(dbName string, collectionName string) error
 }
 
@@ -66,6 +68,26 @@ func (db MongoClient) CreateDocuments(dbname string, collectionName string, docu
 
 	return ids, nil
 
+}
+
+func (db MongoClient) GetDocsByFilter(dbname string, collectionName string, filters bson.M) ([]bson.M, error) {
+	collection := db.client.Database(dbname).Collection(collectionName)
+	// opts := options.Find().SetSort(bson.D{) // Ordenar dados
+
+	cursor, err := collection.Find(context.Background(), filters)
+
+	if err != nil {
+		fmt.Println("error getting db: ", err)
+		return []bson.M{}, err
+	}
+
+	var results []bson.M
+
+	if err = cursor.All(context.TODO(), &results); err != nil {
+		return nil, err
+	}
+
+	return results, nil
 }
 
 func (db MongoClient) DropCollection(dbName string, collectionName string) error {

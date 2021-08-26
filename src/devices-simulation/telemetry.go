@@ -53,9 +53,12 @@ func createPayload(deviceId string, interval float64, nTimes int) map[string]int
 	fmt.Println("now1h: ", now1h)
 	fmt.Println("now1hinterval: ", now1hinterval)
 
+	now1hintervalTs := time.Unix(now1hinterval, 0)
+
 	return map[string]interface{}{
 		"id":              deviceId,
 		"timestamp":       now1hinterval,
+		"datetime":        now1hintervalTs.Format(time.RFC3339),
 		"soil_moisture":   7.5,
 		"ext_temperature": 10.1,
 		"ext_humidity":    98.98,

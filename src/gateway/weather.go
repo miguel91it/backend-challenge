@@ -3,14 +3,16 @@ package gateway
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 )
 
 type Weather struct {
-	Device_id           string  `json:"id"`
-	Timestamp           int     `json:"timestamp"`
-	SoilMoisture        float64 `json:"soil_moisture"`
-	ExternalTemperature float64 `json:"ext_temperature"`
-	ExternalHumidity    float64 `json:"ext_humidity"`
+	Device_id           string    `json:"id"`
+	Timestamp           int       `json:"timestamp"`
+	Datetime            time.Time `json:"datetime"`
+	SoilMoisture        float64   `json:"soil_moisture"`
+	ExternalTemperature float64   `json:"ext_temperature"`
+	ExternalHumidity    float64   `json:"ext_humidity"`
 }
 
 // TODO:

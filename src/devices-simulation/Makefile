@@ -1,6 +1,6 @@
-NUM_DEVICES=1
-DURATION=7
-INTERVAL=2
+NUM_DEVICES=2
+DURATION=10
+INTERVAL=3
 
 run-devices:
 	GATEWAY_HOST=localhost GATEWAY_PORT=28000 go run ./*.go -num-devices=${NUM_DEVICES} -duration=${DURATION} -interval=${INTERVAL}
