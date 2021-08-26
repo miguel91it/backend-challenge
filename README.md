@@ -10,10 +10,11 @@ The project is a monorepo containing a `src/ folder wich has:
 
     * main.go file               -> responsible to start the gateway application
     * Dockerfile file            -> responsible to build the gateway container image
-    * gateway/ folder            -> responsible for group all files related to the gateway application
-    * devices-simulation/ folder -> responsible for group all files related to the devices simulation application
-    * docker-compose.yaml file   -> responsible for launch all the 3 containers (gateway, devices and mongodb)
-    * .env file                  -> responsible for provide environment variables for the gateway and devices containers
+    * gateway/ folder            -> responsible for grouping all files related to the gateway application
+    * goliothMongo/ folder       -> responsible for implementing the mongodb client for this project
+    * devices-simulation/ folder -> responsible for grouping all files related to the devices simulation application
+    * docker-compose.yaml file   -> responsible for launching all the 3 containers (gateway, devices and mongodb)
+    * .env file                  -> responsible for providing environment variables for the gateway and devices containers
 
 Always you want to run the gateway application and the devices simulation, you'll use the `docker-compose` tool. To see how to run the solution, go to the end of this file.
 
@@ -21,8 +22,9 @@ Always you want to run the gateway application and the devices simulation, you'l
 
 Gateway Module is composed by 3 files:
 
-    * gateway.go  -> responsible for launch the gateway server
-    * handlers.go -> responsible for group the API endpoints handlers
+    * db.go       -> responsible to describe the Repository Interface necessary for the gateway
+    * gateway.go  -> responsible for launching the gateway server
+    * handlers.go -> responsible to group the API endpoints handlers
     * weather.go  -> responsible for modeling the weather entity
 
 The Weather Telemetry API has the following entity (model):
@@ -38,6 +40,12 @@ This entity groups data related to the environment weather sent by the devices.
     * SoilMoisture        (float64) -> Rate of soil moisture (must be between 0 and 100%)
     * ExternalTemperature (float64) -> External temperature in celsius degree
     * ExternalHumidity    (float64) -> Rate of external humidity (must be between 0 and 100%)
+
+## GoliothMongo Module
+
+GoliothMongo Module is composed by one file:
+
+    * mongo.go  -> lib responsible to create a mongodb client such way that implements the Interface Repository
 
 ## Devices Module
 
@@ -61,7 +69,7 @@ The project is containerized using a Golang image and for run it you must follow
 * Once inside at the root folder of the project, you must build and run all the containers (mongodb, gateway and devices) using docker compose:
 > sudo docker-compose up --build gateway devices
 
-The command above will build and run all the 3 containers but only gateway and devices containers will be attached and logged into standard output. This way you'll be able to see both logs during the gateway and devices containers executions.
+The command above will build and run all the 3 containers but only gateway and devices containers will be attached and logged into standard output. This way you'll be able to see both logs during the gateway and devices containers executions. Mongodb service doesn't need to be explicit in the command because it's a dependency and therefore it will be started automatically with gateway container.
 
 * After the succesfull conclusion of the above command, you'll be able to attach to the gateway container and see its logs:
 > sudo docker attach gateway

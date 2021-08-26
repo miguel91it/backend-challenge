@@ -14,7 +14,7 @@ var db goliothMongo.Repository
 
 func init() {
 
-	time.Sleep(3 * time.Second)
+	time.Sleep(2 * time.Second)
 
 	dbHost := os.Getenv("DB_HOST")
 	dbPortStr := os.Getenv("DB_PORT")
