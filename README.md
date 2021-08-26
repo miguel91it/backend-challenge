@@ -76,16 +76,13 @@ The project is containerized using a Golang image and for run it you must follow
 * First of all, clone the repository into your machine
 > git clone https://github.com/miguel91it/backend-challenge.git
 
-* Next you must enter in the root folder:
-> cd backend-challenge
+* Next you must enter in the `src` folder:
+> cd backend-challenge/src
 
 * Once inside at the root folder of the project, you must build and run all the containers (mongodb, gateway and devices) using docker compose:
 > sudo docker-compose up --build gateway devices
 
 The command above will build and run all the 3 containers but only gateway and devices containers will be attached and logged into standard output. This way you'll be able to see both logs during the gateway and devices containers executions. Mongodb service doesn't need to be explicit in the command because it's a dependency and therefore it will be started automatically with gateway container.
-
-* After the succesfull conclusion of the above command, you'll be able to attach to the gateway container and see its logs:
-> sudo docker attach gateway
 
 * Finally, to stop and remove all containers
 > sudo docker-compose rm -sfv
