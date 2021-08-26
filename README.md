@@ -87,6 +87,8 @@ The command above will build and run all the 3 containers but only gateway and d
 * Finally, to stop and remove all containers
 > sudo docker-compose rm -sfv
 
+* If you want to change the **`devices simulation parameters`** like number of devices, duration or interval, goes to the file `backend-challenge/src/.env` and change de varibales located in the `DEVICES SIMULATION ENVS`
+
 
 ## How to test the Gateway Server
 
